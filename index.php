@@ -3,7 +3,7 @@
 echo `
 <html>
     <head>
-        <link rel="stylesheet" href="https://devspace.cloud/docs/quickstart.css">
+        <link rel="stylesheet" href="https://devspace.cloud/quickstart.css">
     </head>
     <body>
         <img src="https://devspace.cloud/img/congrats.gif" />
