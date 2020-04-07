@@ -1,4 +1,4 @@
-FROM php:7.4.4-apache-stretch
+FROM php:7.4.4-apache
 
 # Set working directory
 WORKDIR /var/www/html
