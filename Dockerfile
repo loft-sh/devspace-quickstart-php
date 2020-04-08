@@ -1,9 +1,37 @@
-FROM php:7.1-apache-stretch
+FROM php:7.4.4-apache
 
-COPY . /var/www/html
+# Set working directory
+WORKDIR /var/www/html
 
+# Install PDO MySQL driver (optional)
+RUN docker-php-ext-install pdo_mysql
+
+# Enable mod rewrite (optional)
+RUN a2enmod rewrite
+
+# Install git, zip and composer (optional)
+RUN apt update \
+ && apt install -y git zip \
+ && curl --silent --show-error https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install composer dependencies (optional)
+COPY composer.json .
+COPY composer.lock .
+RUN composer install \
+    --ignore-platform-reqs \
+    --no-interaction \
+    --no-plugins \
+    --no-scripts \
+    --prefer-dist
+
+# Add source code files to WORKDIR
+COPY . .
+
+# Ensure file ownership for source code files
+RUN chown -R www-data:www-data .
+
+# Application port (optional)
 EXPOSE 80
 
-RUN usermod -u 1000 www-data; \
-    a2enmod rewrite; \
-    chown -R www-data:www-data /var/www/html
+# Container start command
+CMD ["apache2-foreground"]
