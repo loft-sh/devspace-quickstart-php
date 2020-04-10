@@ -15,8 +15,7 @@ RUN apt update \
  && curl --silent --show-error https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install composer dependencies (optional)
-COPY composer.json .
-COPY composer.lock .
+COPY composer.* ./
 RUN composer install \
     --ignore-platform-reqs \
     --no-interaction \
