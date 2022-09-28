@@ -48,10 +48,19 @@ dev:
     imageSelector: my-image-registry.tld/username/app
     # Replace the container image with this dev-optimized image (allows to skip image building during development)
     devImage: ghcr.io/loft-sh/devspace-containers/php:8-apache
+    # Needed to restart container on php-debug.ini changes
+    command: ["apache2-foreground"]
     # Sync files between the local filesystem and the development container
     sync:
       - path: ./
         uploadExcludeFile: .dockerignore
+      - path: php-debug.ini:/usr/local/etc/php/conf.d/php-debug.ini
+        file: true
+        onUpload:
+          restartContainer: true
+          exec:
+            - command: pecl install xdebug
+            - command: docker-php-ext-enable xdebug
     # Open a terminal and use the following command to start it
     terminal:
       command: ./devspace_start.sh
@@ -67,6 +76,9 @@ dev:
     # Forward the following ports to be able access your application via localhost
     ports:
       - port: 8080:80
+    # Reverse forward the following ports for debugging
+    reversePorts:
+      - port: 9003:9003
     # Open the following URLs once they return an HTTP status code other than 502 or 503
     open:
       - url: http://localhost:8080
